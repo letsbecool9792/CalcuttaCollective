@@ -11,17 +11,6 @@ export default function Landing() {
         <p className="text-xl md:text-2xl text-stone-600 mb-8 leading-relaxed max-w-4xl mx-auto">
           Calcutta Collective helps you discover places and create small, real-world hangouts around them — from cafés and heritage lanes to walks, sunsets, and everything in between.
         </p>
-        <div className="max-w-2xl mx-auto bg-linear-to-r from-amber-100 to-orange-50 border-l-4 border-amber-800 p-6 text-left shadow-md mb-8">
-          <p className="text-amber-900 leading-relaxed mb-4 font-medium">
-            Cities are full of great places, but most of us experience only a tiny part of them.
-          </p>
-          <p className="text-amber-900 leading-relaxed mb-4 font-medium">
-            Calcutta Collective is a city-native platform that helps you explore neighborhoods, discover cafés and cultural spots, and join or create small hangouts with people who want to actually go there.
-          </p>
-          <p className="text-amber-900 leading-relaxed font-semibold">
-            No endless scrolling. No influencer noise. Just real places, real plans, and real people.
-          </p>
-        </div>
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto">

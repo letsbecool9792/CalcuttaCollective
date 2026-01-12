@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import PlaceCard from '../components/PlaceCard'
 import HangoutCard from '../components/HangoutCard'
+import MapHangoutsView from '../components/MapHangoutsView'
 import type { Area } from '../context/AppContext'
 
 export default function AreaPage() {
   const { areaId } = useParams()
   const [area, setArea] = useState<Area | null>(null)
   const [loading, setLoading] = useState(true)
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
 
   useEffect(() => {
     fetch(`http://localhost:3001/api/areas/${areaId}`)
@@ -70,23 +72,56 @@ export default function AreaPage() {
       {/* Hangouts */}
       <section className="bg-green-50 py-12">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
             <h2 className="text-2xl font-bold text-stone-800">Upcoming Hangouts</h2>
-            <Link 
-              to="/create" 
-              state={{ areaId: area.id }}
-              className="bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-            >
-              Create Hangout
-            </Link>
+            
+            <div className="flex items-center gap-3">
+              {/* View Toggle */}
+              <div className="flex bg-white border border-stone-300 rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`px-4 py-2 text-sm font-medium transition-colors ${
+                    viewMode === 'list'
+                      ? 'bg-amber-600 text-white'
+                      : 'bg-white text-stone-700 hover:bg-stone-50'
+                  }`}
+                >
+                  List
+                </button>
+                <button
+                  onClick={() => setViewMode('map')}
+                  className={`px-4 py-2 text-sm font-medium transition-colors ${
+                    viewMode === 'map'
+                      ? 'bg-amber-600 text-white'
+                      : 'bg-white text-stone-700 hover:bg-stone-50'
+                  }`}
+                >
+                  Map
+                </button>
+              </div>
+
+              <Link 
+                to="/create" 
+                state={{ areaId: area.id }}
+                className="bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                Create Hangout
+              </Link>
+            </div>
           </div>
           
           {area.hangouts && area.hangouts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {area.hangouts.map(hangout => (
-                <HangoutCard key={hangout.id} hangout={hangout} />
-              ))}
-            </div>
+            <>
+              {viewMode === 'list' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {area.hangouts.map(hangout => (
+                    <HangoutCard key={hangout.id} hangout={hangout} />
+                  ))}
+                </div>
+              ) : (
+                <MapHangoutsView hangouts={area.hangouts} />
+              )}
+            </>
           ) : (
             <div className="text-center py-12 bg-white rounded-lg border border-stone-200">
               <p className="text-stone-600 mb-4">No hangouts yet in this area.</p>

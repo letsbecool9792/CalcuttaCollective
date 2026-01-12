@@ -31,6 +31,8 @@ interface Hangout {
   date: string
   time: string
   location: string
+  latitude?: number
+  longitude?: number
   maxParticipants: number
   participants: Participant[]
   createdBy: string

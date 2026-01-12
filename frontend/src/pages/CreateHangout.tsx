@@ -1,34 +1,30 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
-
-interface Area {
-  id: string
-  name: string
-}
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import MapLocationPicker from '../components/MapLocationPicker'
 
 export default function CreateHangout() {
   const navigate = useNavigate()
-  const location = useLocation()
-  const preselectedAreaId = location.state?.areaId
 
-  const [areas, setAreas] = useState<Area[]>([])
   const [formData, setFormData] = useState({
-    areaId: preselectedAreaId || '',
     title: '',
     description: '',
     date: '',
     time: '',
     location: '',
+    latitude: '',
+    longitude: '',
     maxParticipants: '6',
     createdBy: ''
   })
 
-  useEffect(() => {
-    fetch('http://localhost:3001/api/areas')
-      .then(res => res.json())
-      .then(data => setAreas(data))
-      .catch(err => console.error('Error fetching areas:', err))
-  }, [])
+  const handleLocationSelect = (locationData: { name: string; lat: number; lng: number }) => {
+    setFormData({
+      ...formData,
+      location: locationData.name,
+      latitude: locationData.lat.toString(),
+      longitude: locationData.lng.toString()
+    })
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -75,25 +71,6 @@ export default function CreateHangout() {
               className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
               required
             />
-          </div>
-
-          {/* Area */}
-          <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">
-              Area *
-            </label>
-            <select
-              name="areaId"
-              value={formData.areaId}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-              required
-            >
-              <option value="">Select an area</option>
-              {areas.map(area => (
-                <option key={area.id} value={area.id}>{area.name}</option>
-              ))}
-            </select>
           </div>
 
           {/* Title */}
@@ -158,20 +135,19 @@ export default function CreateHangout() {
             </div>
           </div>
 
-          {/* Location */}
+          {/* Location Picker */}
           <div>
             <label className="block text-sm font-medium text-stone-700 mb-2">
               Meeting Location *
             </label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              placeholder="e.g., Indian Coffee House entrance"
-              className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-              required
+            <MapLocationPicker 
+              onLocationSelect={handleLocationSelect}
             />
+            {formData.location && (
+              <p className="mt-2 text-sm text-green-700">
+                ✓ Selected: {formData.location}
+              </p>
+            )}
           </div>
 
           {/* Max Participants */}
@@ -194,7 +170,8 @@ export default function CreateHangout() {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-linear-to-r from-amber-700 to-orange-700 hover:from-amber-800 hover:to-orange-800 text-white py-3 rounded-lg font-bold text-lg transition-all shadow-lg hover:shadow-xl"
+            disabled={!formData.location}
+            className="w-full bg-linear-to-r from-amber-700 to-orange-700 hover:from-amber-800 hover:to-orange-800 disabled:from-stone-400 disabled:to-stone-500 disabled:cursor-not-allowed text-white py-3 rounded-lg font-bold text-lg transition-all shadow-lg hover:shadow-xl"
           >
             Create Hangout
           </button>

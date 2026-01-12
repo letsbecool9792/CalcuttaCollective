@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import JoinModal from '../components/JoinModal'
+import MapLocationView from '../components/MapLocationView'
 import type { Hangout } from '../context/AppContext'
 
 export default function HangoutDetail() {
@@ -132,6 +133,17 @@ export default function HangoutDetail() {
             </button>
           </div>
         </div>
+
+        {/* Map */}
+        {hangout.latitude && hangout.longitude && (
+          <div className="bg-white rounded-lg p-6 shadow-md border border-stone-200 mb-6">
+            <MapLocationView
+              latitude={hangout.latitude}
+              longitude={hangout.longitude}
+              locationName={hangout.location}
+            />
+          </div>
+        )}
 
         {/* Participants */}
         <div className="bg-white rounded-lg p-6 shadow-md border border-stone-200">

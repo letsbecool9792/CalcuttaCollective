@@ -59,6 +59,8 @@ let hangouts = [
     date: '2026-01-15',
     time: '09:00',
     location: 'Indian Coffee House',
+    latitude: 22.5729,
+    longitude: 88.3605,
     maxParticipants: 6,
     participants: [
       { name: 'Arjun K', joinedAt: Date.now() - 86400000 },
@@ -75,6 +77,8 @@ let hangouts = [
     date: '2026-01-14',
     time: '17:30',
     location: 'Prinsep Ghat',
+    latitude: 22.5564,
+    longitude: 88.3249,
     maxParticipants: 8,
     participants: [
       { name: 'Rahul D', joinedAt: Date.now() - 172800000 },
@@ -92,6 +96,8 @@ let hangouts = [
     date: '2026-01-19',
     time: '11:00',
     location: 'Flurys',
+    latitude: 22.5533,
+    longitude: 88.3526,
     maxParticipants: 5,
     participants: [
       { name: 'Ananya B', joinedAt: Date.now() - 43200000 }
@@ -127,7 +133,7 @@ app.get('/api/hangouts/:id', (req, res) => {
 });
 
 app.post('/api/hangouts', (req, res) => {
-  const { areaId, title, description, date, time, location, maxParticipants, createdBy } = req.body;
+  const { areaId, title, description, date, time, location, latitude, longitude, maxParticipants, createdBy } = req.body;
   
   const newHangout = {
     id: 'h' + (hangouts.length + 1),
@@ -137,6 +143,8 @@ app.post('/api/hangouts', (req, res) => {
     date,
     time,
     location,
+    latitude: latitude ? parseFloat(latitude) : undefined,
+    longitude: longitude ? parseFloat(longitude) : undefined,
     maxParticipants: parseInt(maxParticipants),
     participants: [{ name: createdBy, joinedAt: Date.now() }],
     createdBy,
