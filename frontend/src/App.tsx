@@ -19,7 +19,7 @@ function App() {
           <Route path="/hangout/:hangoutId" element={<HangoutDetail />} />
           <Route path="/create" element={<CreateHangout />} />
         </Routes>
-      </main>
+      </main> 
       <Footer />
     </div>
   )

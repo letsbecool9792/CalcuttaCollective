@@ -7,7 +7,7 @@ export default function AreasPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/areas')
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/areas`)
       .then(res => res.json())
       .then(data => {
         setAreas(data)

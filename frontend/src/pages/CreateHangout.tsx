@@ -29,7 +29,7 @@ export default function CreateHangout() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    fetch('http://localhost:3001/api/hangouts', {
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/hangouts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)

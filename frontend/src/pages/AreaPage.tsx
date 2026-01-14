@@ -12,7 +12,7 @@ export default function AreaPage() {
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
 
   useEffect(() => {
-    fetch(`http://localhost:3001/api/areas/${areaId}`)
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/areas/${areaId}`)
       .then(res => res.json())
       .then(data => {
         setArea(data)

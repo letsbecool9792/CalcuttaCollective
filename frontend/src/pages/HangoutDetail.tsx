@@ -12,7 +12,7 @@ export default function HangoutDetail() {
   const [shareSuccess, setShareSuccess] = useState(false)
 
   useEffect(() => {
-    fetch(`http://localhost:3001/api/hangouts/${hangoutId}`)
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/hangouts/${hangoutId}`)
       .then(res => res.json())
       .then(data => {
         setHangout(data)
@@ -25,7 +25,7 @@ export default function HangoutDetail() {
   }, [hangoutId])
 
   const handleJoin = (name: string) => {
-    fetch(`http://localhost:3001/api/hangouts/${hangoutId}/join`, {
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/hangouts/${hangoutId}/join`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })
