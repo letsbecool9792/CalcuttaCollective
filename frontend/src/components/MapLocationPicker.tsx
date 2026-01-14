@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -43,7 +43,7 @@ export default function MapLocationPicker({ onLocationSelect, initialLocation }:
     initialLocation?.lng || 88.3639
   ])
   const mapRef = useRef<any>(null)
-  const searchTimeout = useRef<NodeJS.Timeout>()
+  const searchTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const searchLocation = async (query: string) => {
     if (!query.trim()) {
