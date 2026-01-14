@@ -23,7 +23,7 @@ export default function MapLocationView({ latitude, longitude, locationName }: M
         <p className="font-medium">{locationName}</p>
       </div>
       
-      <div className="h-64 md:h-80 rounded-lg overflow-hidden border border-stone-300">
+      <div className="h-64 md:h-80 rounded-lg overflow-hidden border border-stone-300 relative z-0">
         <MapContainer
           center={[latitude, longitude]}
           zoom={14}

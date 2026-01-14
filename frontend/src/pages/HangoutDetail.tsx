@@ -76,8 +76,8 @@ export default function HangoutDetail() {
   const isFull = spotsLeft === 0
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-amber-50 to-stone-50">
-      <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-linear-to-b from-amber-50 to-stone-50 relative z-0">
+      <div className="max-w-3xl mx-auto px-4 py-8 relative z-0">
         {/* Header */}
         <div className="bg-linear-to-br from-amber-100 to-orange-50 rounded-lg p-6 md:p-8 border-l-4 border-amber-800 shadow-lg mb-6">
           <div className="flex items-start justify-between mb-4">

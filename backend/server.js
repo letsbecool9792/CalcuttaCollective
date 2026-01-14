@@ -149,11 +149,15 @@ app.get('/api/hangouts/:id', (req, res) => {
 });
 
 app.post('/api/hangouts', (req, res) => {
-  const { areaId, title, description, date, time, location, latitude, longitude, maxParticipants, createdBy } = req.body;
+  const { title, description, date, time, location, latitude, longitude, maxParticipants, createdBy } = req.body;
+  
+  // Validation
+  if (!title || !createdBy) {
+    return res.status(400).json({ error: 'Missing required fields: title, createdBy' });
+  }
   
   const newHangout = {
-    id: 'h' + (hangouts.length + 1),
-    areaId,
+    id: 'h' + Date.now(), // More reliable ID generation
     title,
     description,
     date,
@@ -161,7 +165,7 @@ app.post('/api/hangouts', (req, res) => {
     location,
     latitude: latitude ? parseFloat(latitude) : undefined,
     longitude: longitude ? parseFloat(longitude) : undefined,
-    maxParticipants: parseInt(maxParticipants),
+    maxParticipants: parseInt(maxParticipants) || 6,
     participants: [{ name: createdBy, joinedAt: Date.now() }],
     createdBy,
     createdAt: Date.now()

@@ -34,9 +34,18 @@ export default function CreateHangout() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`)
+        }
+        return res.json()
+      })
       .then(data => {
-        navigate(`/hangout/${data.id}`)
+        if (data.id) {
+          navigate(`/hangout/${data.id}`)
+        } else {
+          throw new Error('No hangout ID returned')
+        }
       })
       .catch(err => {
         console.error('Error creating hangout:', err)
