@@ -1,5 +1,44 @@
 import { Link } from 'react-router-dom'
 
+// Hard-coded featured hangouts
+const FEATURED_HANGOUTS = [
+  {
+    id: 'featured-1',
+    title: 'Sunday Coffee Walk',
+    description: 'Start the day with coffee at Indian Coffee House, then explore the bookstores together.',
+    area: 'College Street',
+    emoji: '☕',
+    color: 'from-amber-100 to-orange-50',
+    borderColor: 'border-amber-300'
+  },
+  {
+    id: 'featured-2', 
+    title: 'Evening Heritage Stroll',
+    description: 'Golden hour walk through colonial architecture, ending with chai by the river.',
+    area: 'Prinsep Ghat',
+    emoji: '🌅',
+    color: 'from-orange-100 to-yellow-50',
+    borderColor: 'border-orange-300'
+  },
+  {
+    id: 'featured-3',
+    title: 'Street Food Safari',
+    description: 'Hunt for the best kathi rolls, phuchka, and hidden food gems across the city.',
+    area: 'New Market',
+    emoji: '🍜',
+    color: 'from-green-100 to-emerald-50',
+    borderColor: 'border-green-300'
+  }
+]
+
+// Quick vibe shortcuts
+const QUICK_VIBES = [
+  { id: 'social', emoji: '🗣️', label: 'Feeling Social' },
+  { id: 'quiet', emoji: '🌿', label: 'Feeling Quiet' },
+  { id: 'budget', emoji: '💸', label: 'Low Budget' },
+  { id: 'food', emoji: '🍜', label: 'Food Hunt' },
+]
+
 export default function Landing() {
   return (
     <div className="min-h-screen bg-stone-50">
@@ -13,7 +52,7 @@ export default function Landing() {
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto mb-10">
           <Link 
             to="/create"
             className="w-full sm:w-auto bg-linear-to-r from-amber-700 to-orange-700 hover:from-amber-800 hover:to-orange-800 text-white px-8 py-4 rounded-lg text-lg font-bold transition-all shadow-lg hover:shadow-xl"
@@ -21,13 +60,54 @@ export default function Landing() {
             Create Hangout
           </Link>
           <Link 
-            to="/areas"
+            to="/explore"
             className="w-full sm:w-auto bg-linear-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800 text-white px-8 py-4 rounded-lg text-lg font-bold transition-all shadow-lg hover:shadow-xl"
           >
-            Explore Areas
+            Explore by Vibe
           </Link>
         </div>
+
+        {/* Quick Vibe Shortcuts */}
+        <div className="flex flex-wrap justify-center gap-3 max-w-2xl mx-auto">
+          {QUICK_VIBES.map(vibe => (
+            <Link
+              key={vibe.id}
+              to="/explore"
+              className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-stone-200 hover:border-amber-400 hover:shadow-md transition-all text-sm"
+            >
+              <span>{vibe.emoji}</span>
+              <span className="text-stone-700">{vibe.label}</span>
+            </Link>
+          ))}
+        </div>
       </header>
+
+      {/* Featured Hangouts */}
+      <section className="bg-stone-50 py-12 border-t border-stone-200">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold text-stone-800">Featured Hangouts</h2>
+            <Link to="/areas" className="text-amber-700 font-medium hover:underline text-sm">
+              View all →
+            </Link>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {FEATURED_HANGOUTS.map(hangout => (
+              <Link
+                key={hangout.id}
+                to="/create"
+                state={{ suggestion: hangout.title }}
+                className={`bg-linear-to-br ${hangout.color} p-6 rounded-lg border ${hangout.borderColor} hover:shadow-lg transition-all group`}
+              >
+                <span className="text-3xl mb-3 block">{hangout.emoji}</span>
+                <h3 className="font-bold text-stone-800 mb-2 group-hover:text-amber-900">{hangout.title}</h3>
+                <p className="text-sm text-stone-600 mb-3">{hangout.description}</p>
+                <span className="text-xs text-stone-500 bg-white px-2 py-1 rounded-full">{hangout.area}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* How It Works */}
       <section className="bg-green-50 py-16">

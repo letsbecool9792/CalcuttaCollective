@@ -23,7 +23,25 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// In-memory data store
+// ============================================
+// IN-MEMORY DATA STORES
+// ============================================
+
+// Users
+let users = [
+  {
+    id: 'u1',
+    email: 'demo@calcuttacollective.com',
+    password: 'demo123', // In production, this would be hashed
+    name: 'Demo User',
+    bio: 'Love exploring hidden gems in Kolkata!',
+    photoUrl: null,
+    pastHangoutsCount: 3,
+    createdAt: Date.now() - 86400000 * 30
+  }
+];
+
+// Areas
 let areas = [
   {
     id: 'college-street',
@@ -55,75 +73,129 @@ let areas = [
   }
 ];
 
+// Places
 let places = [
-  { id: 'p1', areaId: 'college-street', name: 'Indian Coffee House', type: 'Café', description: 'Iconic spiral café with decades of history' },
-  { id: 'p2', areaId: 'college-street', name: 'College Square', type: 'Park', description: 'Historic park surrounded by bookstores' },
-  { id: 'p3', areaId: 'college-street', name: 'Presidency University', type: 'Heritage', description: 'Colonial architecture and student energy' },
-  { id: 'p4', areaId: 'park-street', name: 'Flurys', type: 'Bakery', description: 'Legendary Swiss bakery since 1927' },
-  { id: 'p5', areaId: 'park-street', name: 'Mocambo', type: 'Restaurant', description: 'Classic Continental dining experience' },
-  { id: 'p6', areaId: 'prinsep-ghat', name: 'James Prinsep Ghat', type: 'Landmark', description: 'Gothic memorial by the river' },
-  { id: 'p7', areaId: 'prinsep-ghat', name: 'Millennium Park', type: 'Park', description: 'Sprawling green space along the Hooghly' },
-  { id: 'p8', areaId: 'new-market', name: 'New Market Building', type: 'Shopping', description: 'Victorian-era covered market' }
+  { id: 'p1', areaId: 'college-street', name: 'Indian Coffee House', type: 'Café', description: 'Iconic spiral café with decades of history', lowCost: true },
+  { id: 'p2', areaId: 'college-street', name: 'College Square', type: 'Park', description: 'Historic park surrounded by bookstores', lowCost: true },
+  { id: 'p3', areaId: 'college-street', name: 'Presidency University', type: 'Heritage', description: 'Colonial architecture and student energy', lowCost: true },
+  { id: 'p4', areaId: 'park-street', name: 'Flurys', type: 'Bakery', description: 'Legendary Swiss bakery since 1927', lowCost: false },
+  { id: 'p5', areaId: 'park-street', name: 'Mocambo', type: 'Restaurant', description: 'Classic Continental dining experience', lowCost: false },
+  { id: 'p6', areaId: 'prinsep-ghat', name: 'James Prinsep Ghat', type: 'Landmark', description: 'Gothic memorial by the river', lowCost: true },
+  { id: 'p7', areaId: 'prinsep-ghat', name: 'Millennium Park', type: 'Park', description: 'Sprawling green space along the Hooghly', lowCost: true },
+  { id: 'p8', areaId: 'new-market', name: 'New Market Building', type: 'Shopping', description: 'Victorian-era covered market', lowCost: true },
+  { id: 'p9', areaId: 'new-market', name: 'Nahoum\'s Bakery', type: 'Bakery', description: 'Historic Jewish bakery with legendary fruitcakes', lowCost: true },
+  { id: 'p10', areaId: 'college-street', name: 'Paramount Sherbets', type: 'Street Food', description: 'Iconic cold drinks since 1918', lowCost: true }
 ];
 
-let hangouts = [
-  {
-    id: 'h1',
-    areaId: 'college-street',
-    title: 'Morning Coffee & Books',
-    description: 'Start the day at Indian Coffee House, then explore the bookstores together.',
-    date: '2026-01-15',
-    time: '09:00',
-    location: 'Indian Coffee House',
-    latitude: 22.5729,
-    longitude: 88.3605,
-    maxParticipants: 6,
-    participants: [
-      { name: 'Arjun K', joinedAt: Date.now() - 86400000 },
-      { name: 'Priya M', joinedAt: Date.now() - 43200000 }
-    ],
-    createdBy: 'Arjun K',
-    createdAt: Date.now() - 86400000
-  },
-  {
-    id: 'h2',
-    areaId: 'prinsep-ghat',
-    title: 'Sunset Walk & Chai',
-    description: 'Evening walk along the river, watch the sunset, and grab some street chai.',
-    date: '2026-01-14',
-    time: '17:30',
-    location: 'Prinsep Ghat',
-    latitude: 22.5564,
-    longitude: 88.3249,
-    maxParticipants: 8,
-    participants: [
-      { name: 'Rahul D', joinedAt: Date.now() - 172800000 },
-      { name: 'Sneha R', joinedAt: Date.now() - 129600000 },
-      { name: 'Vikram S', joinedAt: Date.now() - 86400000 }
-    ],
-    createdBy: 'Rahul D',
-    createdAt: Date.now() - 172800000
-  },
-  {
-    id: 'h3',
-    areaId: 'park-street',
-    title: 'Sunday Brunch Meetup',
-    description: 'Let\'s try the classic breakfast at Flurys and walk around Park Street.',
-    date: '2026-01-19',
-    time: '11:00',
-    location: 'Flurys',
-    latitude: 22.5533,
-    longitude: 88.3526,
-    maxParticipants: 5,
-    participants: [
-      { name: 'Ananya B', joinedAt: Date.now() - 43200000 }
-    ],
-    createdBy: 'Ananya B',
-    createdAt: Date.now() - 43200000
+// Hangouts
+let hangouts = [];
+
+// Join Requests
+let joinRequests = [];
+
+// Messages (chat)
+let messages = [];
+
+// Reflections
+let reflections = [];
+
+// ============================================
+// AUTH ROUTES
+// ============================================
+
+app.post('/api/auth/signup', (req, res) => {
+  const { email, password, name } = req.body;
+  
+  if (!email || !password || !name) {
+    return res.status(400).json({ error: 'Missing required fields' });
   }
-];
+  
+  if (users.find(u => u.email === email)) {
+    return res.status(400).json({ error: 'Email already registered' });
+  }
+  
+  const newUser = {
+    id: 'u' + Date.now(),
+    email,
+    password, // In production, hash this!
+    name,
+    bio: '',
+    photoUrl: null,
+    pastHangoutsCount: 0,
+    createdAt: Date.now()
+  };
+  
+  users.push(newUser);
+  
+  const { password: _, ...userWithoutPassword } = newUser;
+  res.status(201).json({ user: userWithoutPassword });
+});
 
-// API Routes
+app.post('/api/auth/login', (req, res) => {
+  const { email, password } = req.body;
+  
+  const user = users.find(u => u.email === email && u.password === password);
+  
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid email or password' });
+  }
+  
+  const { password: _, ...userWithoutPassword } = user;
+  res.json({ user: userWithoutPassword });
+});
+
+// ============================================
+// USER ROUTES
+// ============================================
+
+app.get('/api/users/:id', (req, res) => {
+  const user = users.find(u => u.id === req.params.id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  
+  const { password: _, ...userWithoutPassword } = user;
+  res.json({ user: userWithoutPassword });
+});
+
+app.patch('/api/users/:id', (req, res) => {
+  const user = users.find(u => u.id === req.params.id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  
+  const { name, bio, photoUrl } = req.body;
+  if (name) user.name = name;
+  if (bio !== undefined) user.bio = bio;
+  if (photoUrl !== undefined) user.photoUrl = photoUrl;
+  
+  const { password: _, ...userWithoutPassword } = user;
+  res.json({ user: userWithoutPassword });
+});
+
+app.get('/api/users/:id/hangouts', (req, res) => {
+  const userId = req.params.id;
+  const user = users.find(u => u.id === userId);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  
+  // Find hangouts where user is participant or creator
+  const userHangouts = hangouts.filter(h => 
+    h.createdById === userId || 
+    h.participants.some(p => p.userId === userId)
+  ).map(h => {
+    const userReflection = reflections.find(r => r.hangoutId === h.id && r.userId === userId);
+    return {
+      id: h.id,
+      title: h.title,
+      date: h.date,
+      location: h.location,
+      reflected: !!userReflection
+    };
+  });
+  
+  res.json(userHangouts);
+});
+
+// ============================================
+// AREA ROUTES
+// ============================================
+
 app.get('/api/areas', (req, res) => {
   res.json(areas);
 });
@@ -138,6 +210,10 @@ app.get('/api/areas/:id', (req, res) => {
   res.json({ ...area, places: areaPlaces, hangouts: areaHangouts });
 });
 
+// ============================================
+// HANGOUT ROUTES
+// ============================================
+
 app.get('/api/hangouts', (req, res) => {
   res.json(hangouts);
 });
@@ -145,19 +221,22 @@ app.get('/api/hangouts', (req, res) => {
 app.get('/api/hangouts/:id', (req, res) => {
   const hangout = hangouts.find(h => h.id === req.params.id);
   if (!hangout) return res.status(404).json({ error: 'Hangout not found' });
-  res.json(hangout);
+  
+  // Include reflections
+  const hangoutReflections = reflections.filter(r => r.hangoutId === req.params.id);
+  
+  res.json({ ...hangout, reflections: hangoutReflections });
 });
 
 app.post('/api/hangouts', (req, res) => {
-  const { title, description, date, time, location, latitude, longitude, maxParticipants, createdBy } = req.body;
+  const { title, description, date, time, location, latitude, longitude, maxParticipants, createdBy, createdById } = req.body;
   
-  // Validation
   if (!title || !createdBy) {
     return res.status(400).json({ error: 'Missing required fields: title, createdBy' });
   }
   
   const newHangout = {
-    id: 'h' + Date.now(), // More reliable ID generation
+    id: 'h' + Date.now(),
     title,
     description,
     date,
@@ -166,14 +245,180 @@ app.post('/api/hangouts', (req, res) => {
     latitude: latitude ? parseFloat(latitude) : undefined,
     longitude: longitude ? parseFloat(longitude) : undefined,
     maxParticipants: parseInt(maxParticipants) || 6,
-    participants: [{ name: createdBy, joinedAt: Date.now() }],
+    participants: [{ 
+      userId: createdById || null,
+      name: createdBy, 
+      joinedAt: Date.now(),
+      status: 'approved'
+    }],
     createdBy,
+    createdById: createdById || null,
     createdAt: Date.now()
   };
   
   hangouts.push(newHangout);
   res.status(201).json(newHangout);
 });
+
+// ============================================
+// JOIN REQUEST ROUTES
+// ============================================
+
+app.get('/api/hangouts/:id/requests', (req, res) => {
+  const hangoutId = req.params.id;
+  const userId = req.query.userId;
+  
+  const hangout = hangouts.find(h => h.id === hangoutId);
+  if (!hangout) return res.status(404).json({ error: 'Hangout not found' });
+  
+  const isHost = hangout.createdById === userId;
+  const isParticipant = hangout.participants.some(p => p.userId === userId && p.status === 'approved');
+  const userRequest = joinRequests.find(r => r.hangoutId === hangoutId && r.userId === userId);
+  
+  const requests = isHost ? joinRequests.filter(r => r.hangoutId === hangoutId) : [];
+  
+  res.json({
+    isHost,
+    isParticipant,
+    userRequest,
+    requests
+  });
+});
+
+app.post('/api/hangouts/:id/request', (req, res) => {
+  const hangoutId = req.params.id;
+  const { userId, userName, message } = req.body;
+  
+  const hangout = hangouts.find(h => h.id === hangoutId);
+  if (!hangout) return res.status(404).json({ error: 'Hangout not found' });
+  
+  // Check if already requested or participant
+  const existingRequest = joinRequests.find(r => r.hangoutId === hangoutId && r.userId === userId);
+  if (existingRequest) {
+    return res.status(400).json({ error: 'Request already sent' });
+  }
+  
+  const isParticipant = hangout.participants.some(p => p.userId === userId);
+  if (isParticipant) {
+    return res.status(400).json({ error: 'Already a participant' });
+  }
+  
+  const newRequest = {
+    id: 'req' + Date.now(),
+    hangoutId,
+    userId,
+    userName,
+    message: message || '',
+    status: 'pending',
+    createdAt: Date.now()
+  };
+  
+  joinRequests.push(newRequest);
+  res.status(201).json(newRequest);
+});
+
+app.post('/api/requests/:id/approve', (req, res) => {
+  const request = joinRequests.find(r => r.id === req.params.id);
+  if (!request) return res.status(404).json({ error: 'Request not found' });
+  
+  const hangout = hangouts.find(h => h.id === request.hangoutId);
+  if (!hangout) return res.status(404).json({ error: 'Hangout not found' });
+  
+  // Check capacity
+  if (hangout.participants.length >= hangout.maxParticipants) {
+    return res.status(400).json({ error: 'Hangout is full' });
+  }
+  
+  // Update request status
+  request.status = 'approved';
+  
+  // Add to participants
+  hangout.participants.push({
+    userId: request.userId,
+    name: request.userName,
+    joinedAt: Date.now(),
+    status: 'approved'
+  });
+  
+  // Update user's hangout count
+  const user = users.find(u => u.id === request.userId);
+  if (user) {
+    user.pastHangoutsCount++;
+  }
+  
+  res.json({ success: true, request, hangout });
+});
+
+app.post('/api/requests/:id/reject', (req, res) => {
+  const request = joinRequests.find(r => r.id === req.params.id);
+  if (!request) return res.status(404).json({ error: 'Request not found' });
+  
+  request.status = 'rejected';
+  res.json({ success: true, request });
+});
+
+// ============================================
+// CHAT ROUTES
+// ============================================
+
+app.get('/api/hangouts/:id/messages', (req, res) => {
+  const hangoutId = req.params.id;
+  const hangoutMessages = messages.filter(m => m.hangoutId === hangoutId);
+  res.json(hangoutMessages);
+});
+
+app.post('/api/hangouts/:id/messages', (req, res) => {
+  const hangoutId = req.params.id;
+  const { senderId, senderName, text } = req.body;
+  
+  const hangout = hangouts.find(h => h.id === hangoutId);
+  if (!hangout) return res.status(404).json({ error: 'Hangout not found' });
+  
+  const newMessage = {
+    id: 'msg' + Date.now(),
+    hangoutId,
+    senderId,
+    senderName,
+    text,
+    timestamp: Date.now()
+  };
+  
+  messages.push(newMessage);
+  res.status(201).json(newMessage);
+});
+
+// ============================================
+// REFLECTION ROUTES
+// ============================================
+
+app.post('/api/hangouts/:id/reflect', (req, res) => {
+  const hangoutId = req.params.id;
+  const { userId, rating, reflection, placesVisited, photoUrl } = req.body;
+  
+  const hangout = hangouts.find(h => h.id === hangoutId);
+  if (!hangout) return res.status(404).json({ error: 'Hangout not found' });
+  
+  const user = users.find(u => u.id === userId);
+  
+  const newReflection = {
+    id: 'ref' + Date.now(),
+    hangoutId,
+    userId,
+    userName: user?.name || 'Anonymous',
+    rating,
+    reflection: reflection || '',
+    placesVisited: placesVisited || [],
+    photoUrl: photoUrl || null,
+    createdAt: Date.now()
+  };
+  
+  reflections.push(newReflection);
+  res.status(201).json(newReflection);
+});
+
+// ============================================
+// LEGACY JOIN ROUTE (for backwards compatibility)
+// ============================================
 
 app.post('/api/hangouts/:id/join', (req, res) => {
   const hangout = hangouts.find(h => h.id === req.params.id);
@@ -183,16 +428,25 @@ app.post('/api/hangouts/:id/join', (req, res) => {
     return res.status(400).json({ error: 'Hangout is full' });
   }
   
-  const { name } = req.body;
-  const alreadyJoined = hangout.participants.some(p => p.name === name);
+  const { name, userId } = req.body;
+  const alreadyJoined = hangout.participants.some(p => p.name === name || (userId && p.userId === userId));
   
   if (alreadyJoined) {
     return res.status(400).json({ error: 'You have already joined this hangout' });
   }
   
-  hangout.participants.push({ name, joinedAt: Date.now() });
+  hangout.participants.push({ 
+    userId: userId || null,
+    name, 
+    joinedAt: Date.now(),
+    status: 'approved'
+  });
   res.json(hangout);
 });
+
+// ============================================
+// START SERVER
+// ============================================
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
