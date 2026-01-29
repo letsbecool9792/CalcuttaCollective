@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-
 interface JoinRequest {
   id: string
   hangoutId: string
