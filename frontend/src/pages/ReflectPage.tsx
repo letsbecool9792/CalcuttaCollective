@@ -4,18 +4,10 @@ import { useAuth } from '../context/AuthContext'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
-// Hard-coded place options for reflection
-const PLACE_OPTIONS = [
-  'Indian Coffee House',
-  'College Square',
-  'Flurys',
-  'Mocambo',
-  'Prinsep Ghat',
-  'Millennium Park',
-  'New Market',
-  'Street food stall',
-  'Other'
-]
+interface Place {
+  id: string
+  name: string
+}
 
 export default function ReflectPage() {
   const { hangoutId } = useParams()
@@ -23,6 +15,7 @@ export default function ReflectPage() {
   const { user } = useAuth()
 
   const [hangout, setHangout] = useState<any>(null)
+  const [places, setPlaces] = useState<Place[]>([])
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
@@ -32,10 +25,14 @@ export default function ReflectPage() {
   const [photoUrl, setPhotoUrl] = useState('')
 
   useEffect(() => {
-    fetch(`${API_URL}/api/hangouts/${hangoutId}`)
-      .then(res => res.json())
-      .then(data => {
-        setHangout(data)
+    // Fetch hangout and places in parallel
+    Promise.all([
+      fetch(`${API_URL}/api/hangouts/${hangoutId}`).then(r => r.json()),
+      fetch(`${API_URL}/api/places`).then(r => r.json())
+    ])
+      .then(([hangoutData, placesData]) => {
+        setHangout(hangoutData)
+        setPlaces(Array.isArray(placesData) ? placesData : [])
         setLoading(false)
       })
       .catch(() => setLoading(false))
@@ -154,19 +151,30 @@ export default function ReflectPage() {
               Places you visited
             </label>
             <div className="flex flex-wrap gap-2">
-              {PLACE_OPTIONS.map(place => (
+              {places.map(place => (
                 <button
-                  key={place}
-                  onClick={() => togglePlace(place)}
+                  key={place.id}
+                  onClick={() => togglePlace(place.name)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    placesVisited.includes(place)
+                    placesVisited.includes(place.name)
                       ? 'bg-green-600 text-white'
                       : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
                   }`}
                 >
-                  {place}
+                  {place.name}
                 </button>
               ))}
+              {/* Always include "Other" option */}
+              <button
+                onClick={() => togglePlace('Other')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  placesVisited.includes('Other')
+                    ? 'bg-green-600 text-white'
+                    : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                }`}
+              >
+                Other
+              </button>
             </div>
           </div>
 

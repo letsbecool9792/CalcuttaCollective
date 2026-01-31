@@ -87,8 +87,58 @@ let places = [
   { id: 'p10', areaId: 'college-street', name: 'Paramount Sherbets', type: 'Street Food', description: 'Iconic cold drinks since 1918', lowCost: true }
 ];
 
-// Hangouts
-let hangouts = [];
+// Hangouts (seeded with sample data)
+let hangouts = [
+  {
+    id: 'h1',
+    title: 'Sunday Coffee & Books',
+    description: 'Start the day at Indian Coffee House, then explore the bookstores together. Perfect for book lovers and chai enthusiasts.',
+    date: '2026-02-08',
+    time: '10:00',
+    location: 'Indian Coffee House, College Street',
+    latitude: 22.5729,
+    longitude: 88.3605,
+    maxParticipants: 6,
+    participants: [
+      { userId: 'u1', name: 'Demo User', joinedAt: Date.now() - 86400000, status: 'approved' }
+    ],
+    createdBy: 'Demo User',
+    createdById: 'u1',
+    createdAt: Date.now() - 86400000 * 3
+  },
+  {
+    id: 'h2',
+    title: 'Sunset at Prinsep Ghat',
+    description: 'Golden hour walk along the river, watch the sunset, grab some street chai. Bring your camera!',
+    date: '2026-02-07',
+    time: '17:00',
+    location: 'Prinsep Ghat',
+    latitude: 22.5564,
+    longitude: 88.3249,
+    maxParticipants: 8,
+    participants: [
+      { userId: 'u1', name: 'Demo User', joinedAt: Date.now() - 172800000, status: 'approved' }
+    ],
+    createdBy: 'Demo User',
+    createdById: 'u1',
+    createdAt: Date.now() - 172800000
+  },
+  {
+    id: 'h3',
+    title: 'New Market Food Trail',
+    description: 'Hunt for the best kathi rolls, visit Nahoum\'s Bakery, and explore the vintage market lanes.',
+    date: '2026-02-15',
+    time: '12:00',
+    location: 'New Market',
+    latitude: 22.5626,
+    longitude: 88.3510,
+    maxParticipants: 5,
+    participants: [],
+    createdBy: 'Community',
+    createdById: null,
+    createdAt: Date.now() - 43200000
+  }
+];
 
 // Join Requests
 let joinRequests = [];
@@ -442,6 +492,26 @@ app.post('/api/hangouts/:id/join', (req, res) => {
     status: 'approved'
   });
   res.json(hangout);
+});
+
+// ============================================
+// HEALTH CHECK
+// ============================================
+
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: Date.now(),
+    uptime: process.uptime()
+  });
+});
+
+// ============================================
+// PLACES ENDPOINT
+// ============================================
+
+app.get('/api/places', (req, res) => {
+  res.json(places);
 });
 
 // ============================================

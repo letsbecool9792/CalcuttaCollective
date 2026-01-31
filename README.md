@@ -1,73 +1,232 @@
 # Calcutta Collective
 
-A city-native platform to discover neighborhoods, create small real-world hangouts, and build community through shared experiences.
+**A location-first PWA for turning city discovery into real-world hangouts.**
 
-## Quick Start
+🔗 [Live Demo](https://calcutta-collective.vercel.app) · [Backend API](https://calcutta-collective-api.onrender.com/api/health)
 
-### Backend (Terminal 1)
+---
+
+## Context & Credibility
+
+### Competition Background
+
+This project was developed and pitched at:
+- **BPlan @ Kshitij 2025** (IIT Kharagpur)
+- **Hult Prize 2025** (HITK Campus Round)
+
+It was built primarily as a **competition product** — designed for live demos under time constraints, with a focus on demonstrating a working MVP rather than production-scale infrastructure.
+
+### Team & Acknowledgements
+
+**Product Development:** Built solo by [me](https://suparno.me).
+
+**Pitched alongside:**
+- [Aritra](https://linkedin.com/in/) 
+- [Dhrubaparna](https://linkedin.com/in/)
+- [Ayushi](https://linkedin.com/in/)
+
+*(Check collaborators to see their GitHubs)*
+
+---
+
+## Problem Framing
+
+### The Urban Isolation Problem
+
+Cities are full of people — and yet urban loneliness is rising. People scroll through location posts, save cafés they'll never visit, and spend weekends defaulting to the same routines.
+
+**The issue isn't lack of information. It's lack of activation.**
+
+### Why Existing Solutions Fail
+
+| Platform Type | Problem |
+|---------------|---------|
+| **Review apps** (Zomato, Google Maps) | Optimized for transactions, not experiences. You find a place, not a reason to go. |
+| **Event platforms** (Meetup, BookMyShow) | Too formal, too large, too much commitment. Not everyone wants to attend "events". |
+| **Social media** (Instagram, YouTube) | Influencer-led discovery. Passive consumption. No bridge to real-world action. |
+
+### The Gap
+
+- **Discovery ≠ Action** — Saving a reel is not the same as going outside.
+- **Online ≠ Offline** — Engagement metrics don't translate to real experiences.
+- **Information ≠ Intention** — Knowing about a place doesn't mean you'll visit it.
+
+Calcutta Collective exists to close this gap — by turning discovery into small, real-world hangouts.
+
+---
+
+## Product Hypothesis
+
+The app's design is driven by specific, testable assumptions:
+
+| Hypothesis | Design Response |
+|------------|-----------------|
+| **Location-first discovery lowers activation friction** | Map-driven UX. Areas before listings. Visual context before details. |
+| **Approval-based joining increases safety & trust** | Hosts approve join requests. No open joins. Participants see who they'll meet. |
+| **Pre-hangout chat reduces social anxiety** | Group chat unlocks after approval. Ice-breaking happens before meeting. |
+| **Post-hangout reflection creates long-term value loops** | Reflections feed back into discovery. Real experiences > reviews. |
+| **Small groups feel safer than large events** | Max 5-8 participants. Intimate, not overwhelming. |
+| **Vibe-based exploration matches intent** | "Feeling Social" vs "Feeling Quiet" — mood-first, not rating-first. |
+
+These aren't proven — they're **intentional design choices** meant to be validated.
+
+---
+
+## Canonical User Flow
+
+![User Flow Diagram](./docs/user-flow.png)
+
+---
+
+## System Design
+
+### Architecture Overview
+
+![Architecture Overview](./docs/architecture.png)
+
+### Data Models
+
+| Entity | Key Fields |
+|--------|------------|
+| **User** | id, email, name, bio, pastHangoutsCount |
+| **Area** | id, name, description, vibe[], image |
+| **Place** | id, areaId, name, type, lowCost |
+| **Hangout** | id, title, description, date, time, location, lat/lng, participants[], createdById |
+| **JoinRequest** | id, hangoutId, userId, message, status (pending/approved/rejected) |
+| **Message** | id, hangoutId, senderId, senderName, text, timestamp |
+| **Reflection** | id, hangoutId, userId, rating, reflection, placesVisited[], photoUrl |
+
+### Key Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/health` | Health check |
+| `POST` | `/api/auth/signup` | Create account |
+| `POST` | `/api/auth/login` | Login |
+| `GET` | `/api/areas` | List areas |
+| `GET` | `/api/areas/:id` | Area detail + places + hangouts |
+| `GET` | `/api/places` | All places |
+| `GET` | `/api/hangouts` | List hangouts |
+| `POST` | `/api/hangouts` | Create hangout |
+| `GET` | `/api/hangouts/:id` | Hangout detail |
+| `POST` | `/api/hangouts/:id/request` | Request to join |
+| `GET` | `/api/hangouts/:id/requests` | Check request status |
+| `POST` | `/api/requests/:id/approve` | Approve join request |
+| `POST` | `/api/requests/:id/reject` | Reject join request |
+| `GET` | `/api/hangouts/:id/messages` | Get chat messages |
+| `POST` | `/api/hangouts/:id/messages` | Send message |
+| `POST` | `/api/hangouts/:id/reflect` | Submit reflection |
+
+---
+
+## Key Engineering Decisions
+
+### Why PWA over Native?
+
+- **Zero install friction** — Users can try immediately
+- **Competition demo-friendly** — Works on any device with a browser
+- **Cross-platform by default** — No separate iOS/Android builds
+- **Good enough for MVP** — For testing product hypotheses, native adds complexity without proportional value
+
+### Why Approval-Based Joining?
+
+Open joins feel unsafe for small, real-world meetups. The approval flow:
+1. Creates accountability (hosts vet participants)
+2. Allows intro messages (soft ice-breaking)
+3. Prevents spam joins
+4. Mirrors how real-life plans form ("Can I bring a friend?" → "Sure, who?")
+
+### Why Maps Are Central to UX
+
+Location is the atomic unit of this product. Maps:
+- Make hangout locations concrete, not abstract
+- Enable "where" before "what"
+- Leverage spatial intuition over list fatigue
+- Differentiate from text-heavy review apps
+
+### Why Recommendations Are Hard-Coded
+
+Vibe-based recommendations (Social, Quiet, Budget, etc.) are currently static. This is intentional:
+1. **Demo realism** — App feels populated without a cold-start problem
+2. **Hypothesis testing** — We're testing if vibe-first discovery works, not if our ML model is good
+3. **Time constraints** — Competition timeline didn't allow for recommendation engine
+
+If validated, recommendations would be learned from reflection data.
+
+### Why Dead Ends Were Removed
+
+Earlier versions had "Featured Hangouts" that linked to `/create` instead of real hangouts. This was:
+- Confusing (users expected to see a hangout, not create one)
+- Misleading (fake data pretending to be real)
+
+**Fix:** Section now pulls from actual `/api/hangouts` and links to real hangout pages.
+
+---
+
+## Screenshots
+
+![Landing](./docs/screenshots/landing.png)
+![Explore](./docs/screenshots/explore.png)
+![Areas](./docs/screenshots/areas.png)
+![Area List](./docs/screenshots/area-list.png)
+![Area Map](./docs/screenshots/area-map.png)
+![Create](./docs/screenshots/create.png)
+![Hangout](./docs/screenshots/hangout.png)
+![Chat](./docs/screenshots/chat.png)
+![Reflect](./docs/screenshots/reflect.png)
+
+---
+
+## Running Locally
+
+### Requirements
+
+- Node.js 18+
+- npm
+
+### Setup
+
 ```bash
+# Clone the repo
+git clone https://github.com/letsbecool9792/CalcuttaCollective.git
+cd CalcuttaCollective
+
+# Install backend dependencies
+cd backend
+npm install
+
+# Install frontend dependencies
+cd ../frontend
+npm install
+```
+
+### Start Development Servers
+
+```bash
+# Terminal 1 - Backend (port 3001)
 cd backend
 npm start
-```
-Server runs on `http://localhost:3001`
 
-### Frontend (Terminal 2)
-```bash
+# Terminal 2 - Frontend (port 5173)
 cd frontend
 npm run dev
 ```
-App runs on `http://localhost:5173`
 
-## Features
+### Verify Setup
 
-### Core
-✅ **Landing Page** - Hero, featured hangouts, vibe shortcuts  
-✅ **Area Explorer** - Discover places and hangouts by neighborhood  
-✅ **Interactive Maps** - Leaflet + OpenStreetMap integration  
-✅ **Mobile-First** - Fully responsive design  
-
-### Authentication
-✅ **Sign Up / Login** - Email & password auth  
-✅ **Profile Page** - View & edit profile, see past hangouts  
-✅ **Persistent Sessions** - localStorage-based auth  
-
-### Hangouts
-✅ **Create Hangout** - Location picker with map, date/time selection  
-✅ **Join Request Flow** - Request to join, host approves/rejects  
-✅ **Hangout Detail** - View participants, status, location on map  
-✅ **Share Links** - Copy link to share hangout  
-
-### Social
-✅ **Pre-Hangout Chat** - Group messaging for approved participants  
-✅ **Post-Hangout Reflections** - Rate, write about, and share your experience  
-✅ **Vibe-Based Discovery** - Explore by mood (Social, Quiet, Budget, Adventure, Foodie)  
-
-### Demo Data (Hard-coded)
-✅ **Featured Hangouts** - Curated hangouts on landing page  
-✅ **Suggested Places** - Low-cost spots, iconic locations  
-✅ **Vibe Recommendations** - Area and place suggestions per vibe  
-
-## User Flows
-
-**Flow A: Discovery**
-```
-/ → /explore → select vibe → view recommendations → /create
+```bash
+curl http://localhost:3001/api/health
+# → { "status": "ok", "timestamp": ..., "uptime": ... }
 ```
 
-**Flow B: Join a Hangout**
+### Demo Credentials
+
 ```
-/hangout/:id → Request to Join → Host Approves → Access Chat
+Email: demo@calcuttacollective.com
+Password: demo123
 ```
 
-**Flow C: Create & Host**
-```
-/create → pick location on map → submit → manage join requests
-```
-
-**Flow D: Post-Hangout**
-```
-/hangout/:id → (after date passes) → Reflect → rate & write reflection
-```
+---
 
 ## Tech Stack
 
@@ -75,71 +234,10 @@ App runs on `http://localhost:5173`
 |-------|------------|
 | Frontend | React 18, TypeScript, Vite, Tailwind CSS v4 |
 | Routing | React Router v6 |
-| Maps | Leaflet, React-Leaflet, OpenStreetMap, Nominatim API |
+| Maps | Leaflet, React-Leaflet, OpenStreetMap, Nominatim |
 | Backend | Node.js, Express.js |
-| Data | In-memory store (no database) |
-| Deployment | Vercel (frontend) + Render (backend) |
+| Data | In-memory store (demo) |
+| Deployment | Vercel (frontend), Render (backend) |
 
-## API Endpoints
+---
 
-### Auth
-- `POST /api/auth/signup` - Create account
-- `POST /api/auth/login` - Login
-
-### Users
-- `GET /api/users/:id` - Get user profile
-- `PATCH /api/users/:id` - Update profile
-- `GET /api/users/:id/hangouts` - Get user's hangouts
-
-### Areas
-- `GET /api/areas` - List all areas
-- `GET /api/areas/:id` - Get area with places & hangouts
-
-### Hangouts
-- `GET /api/hangouts` - List all hangouts
-- `GET /api/hangouts/:id` - Get hangout details
-- `POST /api/hangouts` - Create hangout
-
-### Join Requests
-- `POST /api/hangouts/:id/request` - Request to join
-- `GET /api/hangouts/:id/requests` - Get request status
-- `POST /api/requests/:id/approve` - Approve request
-- `POST /api/requests/:id/reject` - Reject request
-
-### Chat
-- `GET /api/hangouts/:id/messages` - Get messages
-- `POST /api/hangouts/:id/messages` - Send message
-
-### Reflections
-- `POST /api/hangouts/:id/reflect` - Submit reflection
-
-## Demo Credentials
-
-```
-Email: demo@calcuttacollective.com
-Password: demo123
-```
-
-## Environment Variables
-
-### Frontend (.env)
-```
-VITE_API_URL=http://localhost:3001
-```
-
-### Backend
-```
-PORT=3001
-```
-
-## Deployment
-
-**Frontend (Vercel):**
-- Build command: `npm run build`
-- Output directory: `dist`
-- Set `VITE_API_URL` to your Render backend URL
-
-**Backend (Render):**
-- Build command: `npm install`
-- Start command: `node server.js`
-- CORS configured for `*.vercel.app`

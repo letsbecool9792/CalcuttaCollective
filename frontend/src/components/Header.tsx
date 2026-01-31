@@ -7,8 +7,8 @@ export default function Header() {
   return (
     <header className="bg-linear-to-r from-amber-900 to-green-900 text-stone-100 py-4 sticky top-0 z-50 shadow-md">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <Link to="/" className="text-xl font-bold hover:text-stone-200 transition-colors">
+        <div className="flex items-center gap-4 sm:gap-6">
+          <Link to="/" className="text-lg sm:text-xl font-bold hover:text-stone-200 transition-colors">
             Calcutta Collective
           </Link>
           <nav className="hidden sm:flex items-center gap-4 text-sm">
@@ -21,12 +21,14 @@ export default function Header() {
           </nav>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Mobile: + icon, Desktop: full text */}
           <Link 
             to="/create" 
-            className="bg-amber-600 hover:bg-amber-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            className="bg-amber-600 hover:bg-amber-700 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
           >
-            Create Hangout
+            <span className="text-lg leading-none">+</span>
+            <span className="hidden sm:inline">Create</span>
           </Link>
           
           {user ? (

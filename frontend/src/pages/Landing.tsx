@@ -1,35 +1,7 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-// Hard-coded featured hangouts
-const FEATURED_HANGOUTS = [
-  {
-    id: 'featured-1',
-    title: 'Sunday Coffee Walk',
-    description: 'Start the day with coffee at Indian Coffee House, then explore the bookstores together.',
-    area: 'College Street',
-    emoji: '☕',
-    color: 'from-amber-100 to-orange-50',
-    borderColor: 'border-amber-300'
-  },
-  {
-    id: 'featured-2', 
-    title: 'Evening Heritage Stroll',
-    description: 'Golden hour walk through colonial architecture, ending with chai by the river.',
-    area: 'Prinsep Ghat',
-    emoji: '🌅',
-    color: 'from-orange-100 to-yellow-50',
-    borderColor: 'border-orange-300'
-  },
-  {
-    id: 'featured-3',
-    title: 'Street Food Safari',
-    description: 'Hunt for the best kathi rolls, phuchka, and hidden food gems across the city.',
-    area: 'New Market',
-    emoji: '🍜',
-    color: 'from-green-100 to-emerald-50',
-    borderColor: 'border-green-300'
-  }
-]
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 // Quick vibe shortcuts
 const QUICK_VIBES = [
@@ -39,7 +11,36 @@ const QUICK_VIBES = [
   { id: 'food', emoji: '🍜', label: 'Food Hunt' },
 ]
 
+// Color mapping for hangouts
+const HANGOUT_COLORS = [
+  { color: 'from-amber-100 to-orange-50', borderColor: 'border-amber-300', emoji: '☕' },
+  { color: 'from-orange-100 to-yellow-50', borderColor: 'border-orange-300', emoji: '🌅' },
+  { color: 'from-green-100 to-emerald-50', borderColor: 'border-green-300', emoji: '🍜' },
+]
+
+interface Hangout {
+  id: string
+  title: string
+  description: string
+  location: string
+  date: string
+  time: string
+}
+
 export default function Landing() {
+  const [hangouts, setHangouts] = useState<Hangout[]>([])
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/hangouts`)
+      .then(res => res.json())
+      .then(data => {
+        // Get up to 3 upcoming hangouts
+        const upcoming = (data || []).slice(0, 3)
+        setHangouts(upcoming)
+      })
+      .catch(err => console.error('Error fetching hangouts:', err))
+  }, [])
+
   return (
     <div className="min-h-screen bg-stone-50">
       {/* Hero Section */}
@@ -82,30 +83,46 @@ export default function Landing() {
         </div>
       </header>
 
-      {/* Featured Hangouts */}
+      {/* Upcoming Hangouts */}
       <section className="bg-stone-50 py-12 border-t border-stone-200">
         <div className="max-w-4xl mx-auto px-6">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-stone-800">Featured Hangouts</h2>
+            <h2 className="text-2xl font-bold text-stone-800">Upcoming Hangouts</h2>
             <Link to="/areas" className="text-amber-700 font-medium hover:underline text-sm">
               View all →
             </Link>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {FEATURED_HANGOUTS.map(hangout => (
-              <Link
-                key={hangout.id}
-                to="/create"
-                state={{ suggestion: hangout.title }}
-                className={`bg-linear-to-br ${hangout.color} p-6 rounded-lg border ${hangout.borderColor} hover:shadow-lg transition-all group`}
-              >
-                <span className="text-3xl mb-3 block">{hangout.emoji}</span>
-                <h3 className="font-bold text-stone-800 mb-2 group-hover:text-amber-900">{hangout.title}</h3>
-                <p className="text-sm text-stone-600 mb-3">{hangout.description}</p>
-                <span className="text-xs text-stone-500 bg-white px-2 py-1 rounded-full">{hangout.area}</span>
+          {hangouts.length === 0 ? (
+            <div className="text-center py-12 bg-white rounded-lg border border-stone-200">
+              <p className="text-stone-500 mb-4">No hangouts yet. Be the first to create one!</p>
+              <Link to="/create" className="text-amber-700 font-medium hover:underline">
+                Create a hangout →
               </Link>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-6">
+              {hangouts.map((hangout, index) => {
+                const style = HANGOUT_COLORS[index % HANGOUT_COLORS.length]
+                return (
+                  <Link
+                    key={hangout.id}
+                    to={`/hangout/${hangout.id}`}
+                    className={`bg-linear-to-br ${style.color} p-6 rounded-lg border ${style.borderColor} hover:shadow-lg transition-all group`}
+                  >
+                    <span className="text-3xl mb-3 block">{style.emoji}</span>
+                    <h3 className="font-bold text-stone-800 mb-2 group-hover:text-amber-900">{hangout.title}</h3>
+                    <p className="text-sm text-stone-600 mb-3 line-clamp-2">{hangout.description}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-stone-500 bg-white px-2 py-1 rounded-full">{hangout.location}</span>
+                      <span className="text-xs text-stone-500">
+                        {new Date(hangout.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
+                      </span>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
         </div>
       </section>
 
