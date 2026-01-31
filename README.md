@@ -144,23 +144,6 @@ Location is the atomic unit of this product. Maps:
 - Leverage spatial intuition over list fatigue
 - Differentiate from text-heavy review apps
 
-### Why Recommendations Are Hard-Coded
-
-Vibe-based recommendations (Social, Quiet, Budget, etc.) are currently static. This is intentional:
-1. **Demo realism** — App feels populated without a cold-start problem
-2. **Hypothesis testing** — We're testing if vibe-first discovery works, not if our ML model is good
-3. **Time constraints** — Competition timeline didn't allow for recommendation engine
-
-If validated, recommendations would be learned from reflection data.
-
-### Why Dead Ends Were Removed
-
-Earlier versions had "Featured Hangouts" that linked to `/create` instead of real hangouts. This was:
-- Confusing (users expected to see a hangout, not create one)
-- Misleading (fake data pretending to be real)
-
-**Fix:** Section now pulls from actual `/api/hangouts` and links to real hangout pages.
-
 ---
 
 ## Screenshots
@@ -242,3 +225,4 @@ Password: demo123
 
 ---
 
+nash ffr
