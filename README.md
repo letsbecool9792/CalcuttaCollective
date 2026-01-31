@@ -2,7 +2,7 @@
 
 **A location-first PWA for turning city discovery into real-world hangouts.**
 
-🔗 [Live Demo](https://calcutta-collective.vercel.app) · [Backend API](https://calcutta-collective-api.onrender.com/api/health)
+🔗 [Live Demo](https://calcutta-collective.vercel.app) · [Backend API](https://calcuttacollective.onrender.com/api/health)
 
 ---
 
@@ -21,9 +21,9 @@ It was built primarily as a **competition product** — designed for live demos 
 **Product Development:** Built solo by [me](https://suparno.me).
 
 **Pitched alongside:**
-- [Aritra](https://linkedin.com/in/) 
-- [Dhrubaparna](https://linkedin.com/in/)
-- [Ayushi](https://linkedin.com/in/)
+- [Aritra](https://www.linkedin.com/in/aritra-maity-a7526b324/) 
+- [Dhrubaparna](https://www.linkedin.com/in/dhrubaparna-mazumder-6b1825328/)
+- [Ayushi](https://www.linkedin.com/in/ayushi-chakraborty-a12202359/)
 
 *(Check collaborators to see their GitHubs)*
 
@@ -165,15 +165,15 @@ Earlier versions had "Featured Hangouts" that linked to `/create` instead of rea
 
 ## Screenshots
 
-![Landing](./docs/screenshots/landing.png)
-![Explore](./docs/screenshots/explore.png)
-![Areas](./docs/screenshots/areas.png)
-![Area List](./docs/screenshots/area-list.png)
-![Area Map](./docs/screenshots/area-map.png)
-![Create](./docs/screenshots/create.png)
-![Hangout](./docs/screenshots/hangout.png)
-![Chat](./docs/screenshots/chat.png)
-![Reflect](./docs/screenshots/reflect.png)
+![Landing](./docs/screenshots/landing.jpeg)
+![Explore](./docs/screenshots/explore.jpeg)
+![Areas](./docs/screenshots/areas.jpeg)
+![Area List](./docs/screenshots/area-list.jpeg)
+![Create](./docs/screenshots/create.jpeg)
+![Hangout](./docs/screenshots/hangout.jpeg)
+![Approve](./docs/screenshots/approve.jpeg)
+![Chat](./docs/screenshots/chat.jpeg)
+![Reflect](./docs/screenshots/reflect.jpeg)
 
 ---
 
