@@ -165,15 +165,16 @@ Earlier versions had "Featured Hangouts" that linked to `/create` instead of rea
 
 ## Screenshots
 
-![Landing](./docs/screenshots/landing.jpeg)
-![Explore](./docs/screenshots/explore.jpeg)
-![Areas](./docs/screenshots/areas.jpeg)
-![Area List](./docs/screenshots/area-list.jpeg)
-![Create](./docs/screenshots/create.jpeg)
-![Hangout](./docs/screenshots/hangout.jpeg)
-![Approve](./docs/screenshots/approve.jpeg)
-![Chat](./docs/screenshots/chat.jpeg)
-![Reflect](./docs/screenshots/reflect.jpeg)
+<p align="center">
+  <img src="docs/screenshots/landing.jpeg" alt="Landing" width="200" />
+  <img src="docs/screenshots/explore.jpeg" alt="Explore" width="200" />
+  <img src="docs/screenshots/areas.jpeg" alt="Areas" width="200" />
+  <img src="docs/screenshots/create.jpeg" alt="Create" width="200" />
+  <img src="docs/screenshots/hangout.jpeg" alt="Hangout" width="200" />
+  <img src="docs/screenshots/approve.jpeg" alt="Approve" width="200" />
+  <img src="docs/screenshots/chat.jpeg" alt="Chat" width="200" />
+  <img src="docs/screenshots/reflect.jpeg" alt="Reflect" width="200" />
+</p>
 
 ---
 
